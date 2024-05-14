@@ -28,8 +28,16 @@ const Article = ({ article }) => {
     });
   };
 
+  const handleDelete = () => {
+    axios.delete("http://localhost:3004/articles/" + article.id);
+    window.location.reload();
+  };
+
   return (
-    <div className="article">
+    <div
+      className="article"
+      style={{ background: isEditing ? "#f3feff" : "white" }}
+    >
       <div className="card-header">
         <h3>{article.author}</h3>
         <em>Posté le {dateFormater(article.date)}</em>
@@ -37,7 +45,8 @@ const Article = ({ article }) => {
 
       {isEditing ? (
         <textarea
-          defaultValue={article.content}
+          defaultValue={editContent ? editContent : article.content} //prend en compte les modifications déjà effectuées dans la textarea en cas de nouvelle modification
+          autoFocus //Permet de mettre le curseur directement dans la zone de texte
           onChange={(e) => setEditContent(e.target.value)}
         ></textarea>
       ) : (
@@ -49,7 +58,17 @@ const Article = ({ article }) => {
         ) : (
           <button onClick={() => setIsEditing(true)}>Edit</button>
         )}
-        <button>Supprimer</button>
+        <button
+          onClick={() => {
+            if (
+              window.confirm("Voulez-vous vraiment supprimer cet article ?")
+            ) {
+              handleDelete();
+            }
+          }}
+        >
+          Supprimer
+        </button>
       </div>
     </div>
   );
